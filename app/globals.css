@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #F1E9D8;
+  --card: #FAF6EC;
+  --ink: #26314A;
+  --ink-soft: #6B7387;
+  --rule: #DCD0AF;
+  --red: #9B3B32;
+  --brass: #9A7A2E;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-work-sans), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-lora), serif;
+}
+
+.font-fig {
+  font-family: var(--font-plex-mono), monospace;
+}
+
+.focus-ring:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@keyframes stampIn {
+  0% { opacity: 0; transform: scale(2.2) rotate(-16deg); }
+  55% { opacity: 1; transform: scale(0.92) rotate(-10deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-10deg); }
+}
+.stamp-pop { animation: stampIn 0.5s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .stamp-pop { animation: none; }
+}
