@@ -23,28 +23,32 @@ export default function SignupPage() {
     }
     setLoading(true);
     const email = phoneToEmail(telephone);
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
-    if (signUpError) {
-      setLoading(false);
-      setError(
-        signUpError.message && signUpError.message.toLowerCase().includes('already')
-          ? 'Un compte existe déjà avec ce numéro.'
-          : 'Impossible de créer le compte. Réessaie.'
-      );
-      return;
-    }
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({ id: data.user.id, nom: nom.trim(), telephone: telephone.trim() });
-      if (profileError) {
+
+    try {
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom, telephone, email, password }),
+      });
+      const result = await res.json();
+
+      if (!res.ok) {
         setLoading(false);
-        setError("Compte créé, mais le profil n'a pas pu être enregistré.");
+        setError(result.error || 'Impossible de créer le compte. Réessaie.');
         return;
       }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      setLoading(false);
+      if (signInError) {
+        setError('Compte créé. Connecte-toi depuis la page de connexion.');
+        return;
+      }
+      router.replace('/carnet');
+    } catch (err) {
+      setLoading(false);
+      setError('Problème de connexion. Vérifie ta connexion internet et réessaie.');
     }
-    setLoading(false);
-    router.replace('/carnet');
   }
 
   return (
